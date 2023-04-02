@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  nginx:
+    container_name: nginx
+    build: ./docker/nginx
+    command: nginx -g "daemon off;"
+    links:
+      - php
+    ports:
+      - "80:80"
+    volumes:
+      - ./logs/nginx:/var/log/nginx
+      - ./src:/var/www/html
+  php-apache-environment:
+    container_name: php-apache
+    image: php:8.0-apache
+    build: ./docker/php
+    links:
+      - mysql
+    volumes:
+      - ./php/src:/var/www/html/
+    ports:
+      - 8000:80
+
+  db:
+    container_name: db
+    image: mysql
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: MYSQL_ROOT_PASSWORD
+        MYSQL_DATABASE: MY_DATABASE
+        MYSQL_USER: MYSQL_USER
+        MYSQL_PASSWORD: MYSQL_PASSWORD
+    volumes: 
+        - ./mysql:/var/lib/mysql
+    ports:
+        - "9906:3306"
